@@ -29,7 +29,8 @@ export default function Main() {
     setRecipe(null);
     setShowRecipeDiv(true);
     const returnedRecipe = await getRecipeFromAi(ingredients);
-    setRecipe(returnedRecipe)
+    returnedRecipe ? setRecipe(returnedRecipe) :
+      setRecipe('Unable to connect');
   }
 
   const inputForm =
