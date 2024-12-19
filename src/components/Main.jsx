@@ -32,34 +32,37 @@ export default function Main() {
     setRecipe(returnedRecipe)
   }
 
+  const inputForm =
+    <form onSubmit={addIngredient}>
+      <input type="text" placeholder="Ingredients" />
+      <button>Add ingredient</button>
+    </form>
+
   const ingredientList = ingredients.length > 0 && 
-    <section>
-      <h3>Ingredients:</h3>
-      <ul>
-        {ingredients.map((ingredient, i) => <li key={i}><span className="text">{ingredient}</span>
-          <button onClick={() => delIngredient(i)}>Del</button></li>)}
-      </ul>
-    </section>
+  <section>
+    <h3>Ingredients:</h3>
+    <ul>
+      {ingredients.map((ingredient, i) => <li key={i}><span className="text">{ingredient}</span>
+        <button onClick={() => delIngredient(i)}>Del</button></li>)}
+    </ul>
+  </section>
 
   const getRecipeDiv = ingredients.length > 3 && 
-    <div ref={ref} className="get-recipe-container">
-      <h4>Let&apos;s go</h4>
-      <button className="go-button" onClick={callAi}>Get recipe</button>
-    </div>
+  <div ref={ref} className="get-recipe-container">
+    <h4>Let&apos;s go</h4>
+    <button className="go-button" onClick={callAi}>Get recipe</button>
+  </div>
 
   const recipeDiv = showRecipeDiv &&
-    <div className="recipe-container">
-      <h4>Chef Hugging Face Recommends</h4>
-      {!recipe ? <img src={spinner} alt="Loading recipe..." /> :
-      <Markdown>{recipe}</Markdown>}
-    </div>
+  <div className="recipe-container">
+    <h4>Chef Hugging Face Recommends</h4>
+    {!recipe ? <img src={spinner} alt="Loading recipe..." /> :
+    <Markdown>{recipe}</Markdown>}
+  </div>
 
   return (
     <main>
-      <form onSubmit={addIngredient}>
-        <input type="text" placeholder="Ingredients" />
-        <button>Add ingredient</button>
-      </form>
+      {inputForm}
       {ingredientList}
       {getRecipeDiv}
       {recipeDiv}
