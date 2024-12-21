@@ -6,19 +6,19 @@ import spinner from '../images/spinner.gif';
 export default function Main() {
   const [ingredients, setIngredients] = useState([]);
   const [recipe, setRecipe] = useState(null);
-  const [showRecipeDiv, setShowRecipeDiv] = useState(false);
   const ref = useRef(null);
+  const formRef = useRef(null);
 
   useEffect(() => {
     const element = ref.current;
     element && element.scrollIntoView({behavior: 'smooth', block: 'start'})
-  },[recipe, showRecipeDiv]);
+  },[recipe]);
 
   function addIngredient(e) {
     e.preventDefault();
     const newIngredient = e.target[0].value;
     newIngredient && setIngredients(prevIngredients => [...prevIngredients, newIngredient]);
-    e.target.reset();
+    e.target[0].value = '';
   }
 
   function delIngredient(i) {
@@ -26,17 +26,26 @@ export default function Main() {
   }
 
   async function callAi() {
-    setRecipe(null);
-    setShowRecipeDiv(true);
-    const returnedRecipe = await getRecipeFromAi(ingredients);
+    setRecipe('spinner');
+    let ingredientString = ingredients.slice(0);
+     for (let i = 2; i < formRef.current.length; i++) {
+       formRef.current[i].checked && ingredientString.push(formRef.current[i].value);
+     }
+    ingredientString = ingredientString.join(', ');
+    const returnedRecipe = await getRecipeFromAi(ingredientString);
     returnedRecipe ? setRecipe(returnedRecipe) :
       setRecipe('Unable to connect');
   }
 
   const inputForm =
-    <form onSubmit={addIngredient}>
+    <form onSubmit={addIngredient} ref={formRef}>
       <input type="text" placeholder="Ingredients" />
       <button>Add ingredient</button>
+      <div className="break"></div>
+      <label>Gluten free<input type="checkbox" name="gluten-free" value="gluten-free" /></label>
+      <label>Vegan<input type="radio" name="special" value="vegan" /></label>
+      <label>Vegetarian<input type="radio" name="special" value="vegetarian" /></label>
+      <label>Pescatarian<input type="radio" name="special" value="pescatarian" /></label>
     </form>
 
   const ingredientList = ingredients.length > 0 && 
@@ -54,10 +63,10 @@ export default function Main() {
     <button className="go-button" onClick={callAi}>Get recipe</button>
   </div>
 
-  const recipeDiv = showRecipeDiv &&
+  const recipeDiv = recipe &&
   <div className="recipe-container">
     <h4>Chef Hugging Face Recommends</h4>
-    {!recipe ? <img src={spinner} alt="Loading recipe..." /> :
+    {recipe === 'spinner' ? <img src={spinner} alt="Loading recipe..." /> :
     <Markdown>{recipe}</Markdown>}
   </div>
 
